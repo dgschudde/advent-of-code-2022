@@ -15,7 +15,7 @@ func main() {
 }
 
 func CalculateCalories() {
-	var actualElf int64 = 1
+	var currentElf int64 = 1
 	elves := make([]int64, 1)
 
 	// Read the input from file
@@ -36,12 +36,12 @@ func CalculateCalories() {
 
 	// Read the values per line from the input file
 	for scanner.Scan() {
-		fmt.Printf("Counting calories for elf: %d\n", actualElf)
+		fmt.Printf("Counting calories for elf: %d\n", currentElf)
 		actualLine := scanner.Text()
 
 		if actualLine == "" {
 			// When a new line is detected, start counting for a new elf
-			actualElf++
+			currentElf++
 
 			// Append a new item to the elves array
 			elves = append(elves, 0)
@@ -53,17 +53,17 @@ func CalculateCalories() {
 				log.Fatal(err)
 			}
 
-			elves[actualElf-1] += actualValue
+			elves[currentElf-1] += actualValue
 		}
 	}
 
 	// Sort the array with elves to determine the maximum value
 	sort.Slice(elves, func(i, j int) bool { return elves[i] < elves[j] })
-	fmt.Printf("Elf with the largest amount of calories %d", elves[len(elves)-1])
+	fmt.Printf("Elf with the largest amount of calories %d\n", elves[len(elves)-1])
 
 	// Calculate the calories for the top 3 elves
 	topThreeTotal := elves[len(elves)-1] + elves[len(elves)-2] + elves[len(elves)-3]
-	fmt.Printf("Amount of calories carries by the top 3 elves: %d", topThreeTotal)
+	fmt.Printf("Amount of calories carried by the top 3 elves: %d\n", topThreeTotal)
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
