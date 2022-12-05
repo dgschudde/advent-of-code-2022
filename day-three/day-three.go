@@ -18,8 +18,8 @@ func main() {
 func Prioritize() {
 	var currentLine = 0
 	var totalScore = 0
-	var rucksacks [300]string
-	var commonTypes string = ""
+	var badges string = ""
+	var group [3]string
 
 	// Read the input from file
 	inputFile, err := os.Open("input/input.txt")
@@ -37,61 +37,49 @@ func Prioritize() {
 
 	scanner := bufio.NewScanner(inputFile)
 
-	// Read the values per line from the input file
-	fmt.Printf("Reading rucksacks contents\n")
-
 	for scanner.Scan() {
 		actualLine := scanner.Text()
-		rucksacks[currentLine] = actualLine
 
-		// Split the actual line
-		var actualLength = len(actualLine)
+		group[currentLine] = actualLine
 
-		var half = actualLength / 2
-
-		var firstPart = string(actualLine[0:half])
-		var secondPart = string(actualLine[half:actualLength])
-
-		fmt.Println(actualLine)
-		fmt.Printf("%s\n", firstPart)
-		fmt.Printf("%s\n", secondPart)
-
-		// Intersect the both results
-		commonTypes += CompareInventories(firstPart, secondPart)
-		fmt.Printf("Types in common for rucksack %d: %s\n\n", currentLine+1, commonTypes)
-
-		currentLine++
+		if (currentLine+1)%3 == 0 {
+			badges += DetermineBadge(group)
+			currentLine = 0
+		} else {
+			currentLine++
+		}
 	}
 
-	fmt.Printf("%d lines read\n\n", currentLine)
-
 	// Calculate the priority
-	totalScore = CalculatePriority(commonTypes)
-	fmt.Printf("Total priority points: %d\n", totalScore)
+	totalScore = CalculatePriority(badges)
+	fmt.Println(totalScore)
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func CompareInventories(firstPart string, secondPart string) string {
-	var commonTypes string = ""
+func DetermineBadge(group [3]string) string {
+	var badge string = ""
+
+	firstPart := group[0]
+	secondPart := group[1]
+	thirdPart := group[2]
 
 	for index, item := range firstPart {
-		if strings.Contains(secondPart, string(item)) {
-			if !strings.Contains(commonTypes, string(item)) {
-				commonTypes += string(item)
-			}
+		if strings.Contains(secondPart, string(item)) && strings.Contains(thirdPart, string(item)) {
+			badge = string(item)
+			break
 		}
 		index++
 	}
 
-	return commonTypes
+	return badge
 }
 
-func CalculatePriority(commonTypes string) int {
+func CalculatePriority(badges string) int {
 	var totalScore = 0
-	for index, item := range commonTypes {
+	for index, item := range badges {
 		totalScore += strings.Index(priority, string(item)) + 1
 		index++
 	}
