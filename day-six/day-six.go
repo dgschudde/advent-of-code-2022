@@ -49,14 +49,13 @@ func Read() string {
 func Scan(input string) int {
 	fmt.Println(input)
 
-	var buffer [4]string
+	var buffer [14]string
 	var count int = 0
 
-	for i := 0; i-3 < len(input); i++ {
-		buffer[0] = string(input[i])
-		buffer[1] = string(input[i+1])
-		buffer[2] = string(input[i+2])
-		buffer[3] = string(input[i+3])
+	for i := 0; i-14 < len(input); i++ {
+		for bufferCount := 0; bufferCount < 14; bufferCount++ {
+			buffer[bufferCount] = string(input[i+bufferCount])
+		}
 
 		if !duplicateInArray(buffer) {
 			break
@@ -65,10 +64,10 @@ func Scan(input string) int {
 		}
 	}
 
-	return count + 5
+	return count + 15
 }
 
-func duplicateInArray(arr [4]string) bool {
+func duplicateInArray(arr [14]string) bool {
 	visited := make(map[string]bool, 0)
 	for i := 0; i < len(arr); i++ {
 		if visited[arr[i]] == true {
