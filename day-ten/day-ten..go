@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type programline struct {
+type programLine struct {
 	instruction string
 	value       int
 }
@@ -17,10 +17,16 @@ type programline struct {
 func main() {
 	var program = Read()
 	Execute(&program)
+
+	for _, character := range output {
+		fmt.Printf("%s", string(character))
+	}
 }
 
-func Read() []programline {
-	var program = make([]programline, 0)
+var output [241]string
+
+func Read() []programLine {
+	var program = make([]programLine, 0)
 
 	// Read the input from file
 	inputFile, err := os.Open("input/input.txt")
@@ -47,7 +53,7 @@ func Read() []programline {
 			amount, _ = strconv.ParseInt(splitLine[1], 10, 32)
 		}
 
-		instruction := programline{instruction: splitLine[0], value: int(amount)}
+		instruction := programLine{instruction: splitLine[0], value: int(amount)}
 
 		program = append(program, instruction)
 	}
@@ -59,39 +65,53 @@ func Read() []programline {
 	return program
 }
 
-func Execute(program *[]programline) {
+func Execute(program *[]programLine) {
 	var cycle = 1
 	var registerX = 1
-	var totalSignalStrength = 0
 
 	var refProgram = *program
 
 	for _, line := range refProgram {
 		if line.instruction == "addx" {
-			cycle++
-			totalSignalStrength += CheckSignalStrength(cycle, registerX)
-			registerX += line.value
-			cycle++
-			totalSignalStrength += CheckSignalStrength(cycle, registerX)
+			Update(cycle, registerX)
 
+			cycle++
+			Update(cycle, registerX)
+
+			cycle++
+			registerX += line.value
+			Update(cycle, registerX)
 		}
 
 		if line.instruction == "noop" {
+			Update(cycle, registerX)
+
 			cycle++
-			totalSignalStrength += CheckSignalStrength(cycle, registerX)
+			Update(cycle, registerX)
 		}
 	}
-
-	fmt.Printf("Total signal strength is %d\n", totalSignalStrength)
 }
 
-func CheckSignalStrength(cycle int, registerX int) int {
-	var signalStrength = 0
-
-	if cycle == 20 || cycle == 60 || cycle == 100 || cycle == 140 || cycle == 180 || cycle == 220 {
-		fmt.Printf("Signal strength at cycle: %d is %d\n", cycle, registerX)
-		signalStrength += registerX * cycle
+func Update(cycle int, registerX int) {
+	if cycle > 0 && cycle <= 40 {
+		Draw(cycle, registerX, 0)
+	} else if cycle > 40 && cycle <= 80 {
+		Draw(cycle, registerX, 40)
+	} else if cycle > 80 && cycle <= 120 {
+		Draw(cycle, registerX, 80)
+	} else if cycle > 120 && cycle <= 160 {
+		Draw(cycle, registerX, 120)
+	} else if cycle > 160 && cycle <= 200 {
+		Draw(cycle, registerX, 160)
+	} else if cycle > 200 && cycle <= 240 {
+		Draw(cycle, registerX, 200)
 	}
+}
 
-	return signalStrength
+func Draw(cycle int, registerX int, offset int) {
+	if cycle-offset == registerX || cycle-offset == registerX+1 || cycle-offset == registerX+2 {
+		output[cycle] = "#"
+	} else {
+		output[cycle] = "."
+	}
 }
