@@ -7,8 +7,6 @@ import (
 	"os"
 )
 
-const priority string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
 func main() {
 	var input = Read()
 	var position = Scan(input)
